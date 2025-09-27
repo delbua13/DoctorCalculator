@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Reglas de Guardias</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .breakdown { margin: 10px 0; }
+        .breakdown-item { margin: 5px 0; padding: 5px; background: #f8f9fa; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Test de Reglas de Guardias Actualizadas</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Viernes (8h Sábado + 9h Laborables)</h3>
+        <button onclick="testFriday()">Probar Viernes</button>
+        <div id="result1"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Domingo (15h Domingo + 9h Laborables)</h3>
+        <button onclick="testSunday()">Probar Domingo</button>
+        <div id="result2"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Lunes (17h Laborables)</h3>
+        <button onclick="testMonday()">Probar Lunes</button>
+        <div id="result3"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 4: Sábado (24h Sábado)</h3>
+        <button onclick="testSaturday()">Probar Sábado</button>
+        <div id="result4"></div>
+    </div>
+
+    <script>
+        async function testFriday() {
+            try {
+                const response = await fetch('/api/calculate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profession: 'facult',
+                        year: 1,
+                        paymentFrequency: 12,
+                        guards: [{ date: '2024-01-19' }] // Viernes
+                    })
+                });
+                const data = await response.json();
+                displayResult('result1', data, 'Viernes');
+            } catch (error) {
+                document.getElementById('result1').innerHTML = 
+                    `<div class="error"><h4>❌ Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+
+        async function testSunday() {
+            try {
+                const response = await fetch('/api/calculate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profession: 'facult',
+                        year: 1,
+                        paymentFrequency: 12,
+                        guards: [{ date: '2024-01-21' }] // Domingo
+                    })
+                });
+                const data = await response.json();
+                displayResult('result2', data, 'Domingo');
+            } catch (error) {
+                document.getElementById('result2').innerHTML = 
+                    `<div class="error"><h4>❌ Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+
+        async function testMonday() {
+            try {
+                const response = await fetch('/api/calculate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profession: 'facult',
+                        year: 1,
+                        paymentFrequency: 12,
+                        guards: [{ date: '2024-01-15' }] // Lunes
+                    })
+                });
+                const data = await response.json();
+                displayResult('result3', data, 'Lunes');
+            } catch (error) {
+                document.getElementById('result3').innerHTML = 
+                    `<div class="error"><h4>❌ Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+
+        async function testSaturday() {
+            try {
+                const response = await fetch('/api/calculate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profession: 'facult',
+                        year: 1,
+                        paymentFrequency: 12,
+                        guards: [{ date: '2024-01-20' }] // Sábado
+                    })
+                });
+                const data = await response.json();
+                displayResult('result4', data, 'Sábado');
+            } catch (error) {
+                document.getElementById('result4').innerHTML = 
+                    `<div class="error"><h4>❌ Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+
+        function displayResult(elementId, data, dayName) {
+            const guard = data.guardDetails[0];
+            let breakdownHtml = '';
+            if (guard.breakdown) {
+                breakdownHtml = '<div class="breakdown"><h5>Desglose:</h5>';
+                guard.breakdown.forEach(item => {
+                    breakdownHtml += `<div class="breakdown-item">${item.type}: ${item.hours}h @ €${item.rate.toFixed(2)}/h = €${item.amount.toFixed(2)}</div>`;
+                });
+                breakdownHtml += '</div>';
+            }
+            
+            document.getElementById(elementId).innerHTML = 
+                `<div class="success">
+                    <h4>✅ ${dayName} - Total: €${guard.salary.toFixed(2)}</h4>
+                    <p><strong>Día:</strong> ${guard.dayOfWeek}</p>
+                    <p><strong>Total Horas:</strong> ${guard.totalHours}h</p>
+                    ${breakdownHtml}
+                </div>`;
+        }
+    </script>
+</body>
+</html>

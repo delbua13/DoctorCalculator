@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Calculadora de Salarios</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test de la Calculadora de Salarios Médicos</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Médico 1er año con guardia</h3>
+        <button onclick="testMedico1()">Probar</button>
+        <div id="result1"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Enfermería 1er año</h3>
+        <button onclick="testEnfermeria()">Probar</button>
+        <div id="result2"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Médico 5º año con guardia de fin de semana</h3>
+        <button onclick="testMedico5()">Probar</button>
+        <div id="result3"></div>
+    </div>
+
+    <script>
+        async function testMedico1() {
+            try {
+                const response = await fetch('/api/calculate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profession: 'facult',
+                        year: 1,
+                        paymentFrequency: 12,
+                        guards: [{ date: '2024-01-15' }] // Lunes
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('result1').innerHTML = 
+                    `<div class="success">
+                        <h4>✅ Éxito</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>`;
+            } catch (error) {
+                document.getElementById('result1').innerHTML = 
+                    `<div class="error">
+                        <h4>❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>`;
+            }
+        }
+
+        async function testEnfermeria() {
+            try {
+                const response = await fetch('/api/calculate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profession: 'enfermeria',
+                        year: 1,
+                        paymentFrequency: 12,
+                        guards: []
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('result2').innerHTML = 
+                    `<div class="success">
+                        <h4>✅ Éxito</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>`;
+            } catch (error) {
+                document.getElementById('result2').innerHTML = 
+                    `<div class="error">
+                        <h4>❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>`;
+            }
+        }
+
+        async function testMedico5() {
+            try {
+                const response = await fetch('/api/calculate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profession: 'facult',
+                        year: 5,
+                        paymentFrequency: 14,
+                        guards: [{ date: '2024-01-20' }] // Sábado
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('result3').innerHTML = 
+                    `<div class="success">
+                        <h4>✅ Éxito</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>`;
+            } catch (error) {
+                document.getElementById('result3').innerHTML = 
+                    `<div class="error">
+                        <h4>❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>`;
+            }
+        }
+    </script>
+</body>
+</html>
