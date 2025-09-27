@@ -136,15 +136,15 @@ function App() {
               >
                 {profession === 'facult' ? (
                   <>
-                    <option value={1}>1er año</option>
+                    <option value={1}>1º año</option>
                     <option value={2}>2º año</option>
-                    <option value={3}>3er año</option>
+                    <option value={3}>3º año</option>
                     <option value={4}>4º año</option>
                     <option value={5}>5º año</option>
                   </>
                 ) : (
                   <>
-                    <option value={1}>1er año</option>
+                    <option value={1}>1º año</option>
                     <option value={2}>2º año</option>
                   </>
                 )}
